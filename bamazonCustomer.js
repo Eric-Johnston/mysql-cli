@@ -28,9 +28,9 @@ function placeOrder(){
                 return false;
             }
         }, {
-            name: "productStock",
+            name: "productAmount",
             type: "input",
-            message: "What quantity would you like?",
+            message: "How many units would you like?",
             validate: function(uInput){
                 if(isNaN(uInput) === false){
                     return true;
@@ -39,37 +39,35 @@ function placeOrder(){
             }
         }])
     .then(function(answer){
-        console.log(answer.productStock);
         var query = "SELECT * FROM products WHERE item_id = ?";
         connection.query(query, [answer.productId], function(err,res){
             if(err) throw err;
 
             var availableStock = parseInt(res[0].stock_quantity);
             var unitPrice = parseFloat(res[0].price);
+            var unitAmount = parseInt(answer.productAmount)
             var department = res[0].department_name;
             
-            var productBuy = function(availableStock, unitPrice, department, unitAmount){
+            var productBuy = function(){
             
-                var newStock = parseInt(res[0].stock_quantity) - answer.productStock;
+                var newStock = parseInt(res[0].stock_quantity) - answer.productAmount;
                 var totalPrice = unitPrice * unitAmount;
-                console.log(newStock)
-            
                 var query = "UPDATE products SET stock_quantity = "+ newStock + " WHERE item_id = "+ answer.productId;
-                console.log(query);
-                connection.query(query, {stock_quantity: newStock}, function(err, res){
+        
+                connection.query(query, function(err, res){
                     if(err) throw err;
-                    console.log("Order completed!\n");
-                    console.log("Your total is $" + totalPrice);
+                    console.log("\nOrder completed!");
+                    console.log("\nYour total is $" + totalPrice);
                 })
             }
             
-            if(availableStock >= parseInt(answer.productStock)){
-                productBuy(availableStock, unitPrice, department, answer.itemID, answer)
+            if(availableStock >= unitAmount){
+                productBuy();
                 connection.end();
             }
             else{
                 console.log("Not enough units in stock!");
-                connection.end();
+                placeOrder();
             }
         })
     })
