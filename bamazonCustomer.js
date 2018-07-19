@@ -11,13 +11,14 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err){
     if(err) throw err;
+    console.log("\n----------------------")
     console.log("Connection successful!");
+    console.log("----------------------\n")
     placeOrder();
 })
 
 function placeOrder(){
-    inquirer
-        .prompt([{
+    inquirer.prompt([{
             name: "productId",
             type: "input",
             message: "What is the ID of the product you would like to purchase?",
@@ -66,7 +67,7 @@ function placeOrder(){
                 connection.end();
             }
             else{
-                console.log("Not enough units in stock!");
+                console.log("\nSorry! Not enough units in stock.\n");
                 placeOrder();
             }
         })
