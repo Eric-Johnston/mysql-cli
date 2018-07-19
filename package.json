@@ -18,6 +18,6 @@
   "homepage": "https://github.com/Eric-Johnston/mysql-cli#readme",
   "dependencies": {
     "inquirer": "^6.0.0",
-    "mysql": "^2.15.0"
+    "mysql": "^2.16.0"
   }
 }
