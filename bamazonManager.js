@@ -70,7 +70,7 @@ function viewProducts(){
 };
 
 function lowInventory(){
-    var query = "SELECT * FROM products WHERE stock_quantity < 50;";
+    var query = "SELECT * FROM products WHERE stock_quantity < 20;";
     connection.query(query, function(err, res){
         if(err) throw err;
         for(i = 0; i < res.length; i++){
@@ -83,6 +83,12 @@ function lowInventory(){
             console.log("PRODUCT NAME: " + productName + " | PRODUCT ID: " + productId + " | PRICE: " + productPrice + " | STOCK: " + productStock);
             console.log("---------------------");
             managerInterface();
-        }
-    })
-}
+        };
+        if(res == false){
+            console.log("\n-----------------------------------");
+            console.log("Your inventory is in good shape!");
+            console.log("-----------------------------------\n");
+            managerInterface();
+        };
+    });
+};
