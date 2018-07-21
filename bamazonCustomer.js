@@ -18,7 +18,8 @@ connection.connect(function(err){
 })
 
 function placeOrder(){
-    inquirer.prompt([{
+    inquirer.prompt([
+        {
             name: "productId",
             type: "input",
             message: "What is the ID of the product you would like to purchase?",
@@ -49,7 +50,7 @@ function placeOrder(){
             var unitAmount = parseInt(answer.productAmount)
             var department = res[0].department_name;
             
-            var productBuy = function(){
+            function productBuy(){
             
                 var newStock = parseInt(res[0].stock_quantity) - answer.productAmount;
                 var totalPrice = unitPrice * unitAmount;
