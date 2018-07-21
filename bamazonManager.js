@@ -64,8 +64,8 @@ function viewProducts(){
             console.log("PRODUCT NAME: " + productName + " | PRODUCT ID: " + productId + " | PRICE: " + productPrice + " | STOCK: " + productStock);
             console.log("--------------------------------------------------------------------------");
         };
-        managerInterface();
     });
+    connection.end();
 };
 
 function lowInventory(){
@@ -80,15 +80,14 @@ function lowInventory(){
             console.log("\n--------------------------------------------------------------------------")
             console.log("PRODUCT NAME: " + productName + " | PRODUCT ID: " + productId + " | PRICE: " + productPrice + " | STOCK: " + productStock);
             console.log("--------------------------------------------------------------------------");
-            managerInterface();
         };
         if(res == false){
             console.log("\n-----------------------------------");
             console.log("Your inventory is in good shape!");
             console.log("-----------------------------------\n");
-            managerInterface();
         };
     });
+    connection.end();
 };
 
 function addInventory(){
@@ -118,8 +117,6 @@ function addInventory(){
         connection.query("SELECT * FROM products WHERE item_id = ?", [answer.productID], function(err, res){
             if(err) throw err;
 
-            console.log(answer.productID)
-
             function updateStock(){
                 var selectedProduct = answer.productID;
                 var addAmount = answer.addStock;
@@ -128,13 +125,67 @@ function addInventory(){
                 connection.query(query, function(err, res){
                     if(err) throw err;
                     console.log("\nSuccess! You've added " + addAmount + " Units to itemID " + selectedProduct);
-                    connection.end();
                 })
+                connection.end();
             }
             
             
             updateStock();
         })
-        
     })
 }
+
+function addProduct(){
+    inquirer.prompt([
+            {
+            name: "productName",
+            type: "input",
+            message: "What is the name of the product?",
+            validate: function(uInput){
+                if(isNaN(uInput) === true){
+                    return true;
+                }
+                return false;
+            }
+        }, {
+            name: "departmentName",
+            type: "input",
+            message: "What is the name of this products Department?",
+            validate: function(uInput){
+                if(isNaN(uInput) === true){
+                    return true;
+                }
+                return false;
+            }
+        }, {
+            name: "productPrice",
+            type: "input",
+            message: "What is the price of the product?",
+            validate: function(uInput){
+                if(isNaN(uInput) === false){
+                    return true;
+                }
+                return false;
+            }
+        }, {
+            name: "productStock",
+            type: "input",
+            message: "How many units are you adding?",
+            validate: function(uInput){
+                if(isNaN(uInput) === false){
+                    return true;
+                }
+                return false;
+            }
+        }
+    ]).then(function(answer){
+        var price = parseFloat(answer.productPrice);
+        var quantity = parseInt(answer.productStock);
+        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES "  + "( " + "\"" + answer.productName + "\"" + ", " + "\"" + answer.departmentName + "\""+ ", " + price + ", " + quantity + ");", function(err, res){
+        if(err) throw err;
+
+        console.log("\nSuccessfully added new product!")
+        })
+        connection.end();
+    })
+};
